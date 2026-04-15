@@ -14,27 +14,27 @@ body { font-family: 'Noto Sans KR', sans-serif; color: #1a1a1a; background: #fff
 .product-info { display: flex; flex-direction: column; }
 .brand-label { font-size: 11px; color: #aaa; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 6px; }
 .product-name { font-size: 24px; font-weight: 700; line-height: 1.3; margin-bottom: 4px; }
-.product-sub { font-size: 13px; color: #666; margin-bottom: 16px; line-height: 1.6; }
+.product-sub { font-size: 13px; color: #666; margin-bottom: 16px; line-height: 1.6; white-space: pre-wrap; }
 .rating-row { display: flex; align-items: center; gap: 8px; margin-bottom: 18px; }
 .stars { color: #e8a000; font-size: 14px; letter-spacing: 2px; }
 .rating-text { font-size: 12px; color: #888; }
 .divider { height: 0.5px; background: #e5e5e5; margin: 18px 0; }
 .price-label { font-size: 11px; color: #aaa; margin-bottom: 4px; }
 .price-main { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 1px; color: #1a1a1a; line-height: 1; }
-.price-contact { font-size: 13px; color: #555; margin-top: 6px; line-height: 1.8; }
-.price-delivery { font-size: 12px; color: #e8a000; font-weight: 500; margin-top: 4px; }
+.price-contact { font-size: 13px; color: #555; margin-top: 6px; line-height: 1.8; white-space: pre-wrap; }
+.price-delivery { font-size: 12px; color: #e8a000; font-weight: 500; margin-top: 4px; white-space: pre-wrap; }
 .option-label { font-size: 12px; font-weight: 500; margin-bottom: 8px; color: #666; }
 .option-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 16px; }
 .chip { border: 0.5px solid #ddd; border-radius: 4px; padding: 6px 12px; font-size: 12px; cursor: pointer; background: #fff; color: #666; transition: all .15s; font-family: 'Noto Sans KR', sans-serif; }
 .chip.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
 .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
-.btn-cart { padding: 14px; border: 1.5px solid #1a1a1a; border-radius: 8px; background: transparent; font-family: 'Noto Sans KR', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; color: #1a1a1a; }
-.btn-buy { padding: 14px; border: 1.5px solid #1a1a1a; border-radius: 8px; background: #1a1a1a; font-family: 'Noto Sans KR', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; color: #fff; }
+.btn-cart { padding: 14px; border: 1.5px solid #1a1a1a; border-radius: 8px; background: transparent; font-family: 'Noto Sans KR', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; color: #1a1a1a; white-space: pre-wrap; }
+.btn-buy { padding: 14px; border: 1.5px solid #1a1a1a; border-radius: 8px; background: #1a1a1a; font-family: 'Noto Sans KR', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; color: #fff; white-space: pre-wrap; }
 .detail-section { border-top: 1.5px solid #1a1a1a; padding-top: 32px; margin-top: 8px; }
 .section-label { font-size: 10px; font-weight: 700; letter-spacing: .18em; color: #aaa; text-transform: uppercase; text-align: center; margin-bottom: 32px; }
 .spec-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 36px; }
 .spec-table tr { border-bottom: 0.5px solid #e5e5e5; }
-.spec-table td { padding: 13px 8px; vertical-align: top; }
+.spec-table td { padding: 13px 8px; vertical-align: top; white-space: pre-wrap; }
 .spec-table td:first-child { width: 34%; color: #666; font-weight: 500; }
 .skill-row { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
 .skill-pill { font-size: 11px; padding: 4px 10px; border-radius: 20px; background: #f5f5f5; color: #555; border: 0.5px solid #e5e5e5; }
@@ -43,8 +43,8 @@ body { font-family: 'Noto Sans KR', sans-serif; color: #1a1a1a; background: #fff
 .project-header { display: flex; align-items: flex-end; gap: 14px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 0.5px solid #e5e5e5; }
 .project-num-big { font-family: 'Bebas Neue', sans-serif; font-size: 52px; color: #1a1a1a; opacity: .1; line-height: 1; }
 .project-title-area { flex: 1; }
-.project-title-big { font-size: 19px; font-weight: 700; line-height: 1.3; }
-.project-subtitle { font-size: 11px; color: #aaa; margin-top: 3px; }
+.project-title-big { font-size: 19px; font-weight: 700; line-height: 1.3; white-space: pre-wrap; }
+.project-subtitle { font-size: 11px; color: #aaa; margin-top: 3px; white-space: pre-wrap; }
 .project-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 20px; }
 .ptag { font-size: 10px; background: #f5f5f5; color: #666; padding: 3px 9px; border-radius: 3px; font-weight: 500; }
 .title-img-wrap { position: relative; width: 100%; border-radius: 12px; overflow: hidden; margin-bottom: 20px; }
@@ -57,9 +57,13 @@ body { font-family: 'Noto Sans KR', sans-serif; color: #1a1a1a; background: #fff
 .psr-block:not(:last-child) { border-right: 0.5px solid #e5e5e5; }
 .psr-label { font-size: 9px; font-weight: 700; letter-spacing: .18em; color: #aaa; text-transform: uppercase; margin-bottom: 6px; }
 .psr-title { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
-.psr-desc { font-size: 12px; color: #666; line-height: 1.65; }
+.psr-desc { font-size: 12px; color: #666; line-height: 1.65; white-space: pre-wrap; }
 .img-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
 .img-2col img { width: 100%; height: 220px; object-fit: cover; border-radius: 10px; border: 0.5px solid #e5e5e5; }
+.img-4col-vertical { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+.img-4col-vertical img { width: 100%; aspect-ratio: 489 / 951; object-fit: cover; border-radius: 10px; border: 0.5px solid #e5e5e5; }
+.project-link-btn { display: block; padding: 14px 24px; background: #1a1a1a; color: white; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 500; text-align: center; margin-bottom: 20px; width: 100%; transition: background 0.2s; }
+.project-link-btn:hover { background: #333; }
 .contrib-section { margin-bottom: 20px; background: #f8f8f8; border-radius: 10px; padding: 18px 20px; }
 .contrib-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
 .contrib-title { font-size: 10px; font-weight: 700; letter-spacing: .15em; color: #aaa; text-transform: uppercase; }
@@ -71,10 +75,37 @@ body { font-family: 'Noto Sans KR', sans-serif; color: #1a1a1a; background: #fff
 .contrib-pct { font-weight: 700; color: #1a1a1a; }
 .gauge-bg { background: #e5e5e5; border-radius: 4px; height: 6px; overflow: hidden; }
 .gauge-fill { height: 100%; background: #1a1a1a; border-radius: 4px; }
-.insight-box { background: #1a1a1a; color: #fff; border-radius: 8px; padding: 20px 22px; font-size: 13px; line-height: 1.7; margin-bottom: 20px; }
+.insight-box { background: #736b6b; color: #fff; border-radius: 8px; padding: 20px 22px; font-size: 13px; line-height: 1.7; margin-bottom: 20px; white-space: pre-wrap; }
 .insight-label { font-size: 9px; font-weight: 700; letter-spacing: .18em; opacity: .5; margin-bottom: 8px; }
 .video-wrap { width: 100%; border-radius: 12px; overflow: hidden; margin-bottom: 20px; background: #111; min-height: 280px; display: flex; align-items: center; justify-content: center; }
 .video-wrap iframe { width: 100%; height: 300px; border: none; }
+
+/* Image Modal Styles */
+.image-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex; justify-content: center; align-items: center;
+  z-index: 9999;
+  padding: 20px;
+}
+.image-modal-content {
+  max-width: 100%; max-height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+}
+.image-modal-close {
+  position: absolute; top: 20px; right: 20px;
+  color: white; background: none; border: none;
+  font-size: 32px; cursor: pointer;
+}
+.clickable-img {
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.clickable-img:hover {
+  opacity: 0.8;
+}
 .video-wrap video { width: 100%; border-radius: 12px; }
 .video-placeholder-inner { text-align: center; color: #888; padding: 40px; }
 .play-btn { width: 60px; height: 60px; border-radius: 50%; background: rgba(255,255,255,.1); border: 2px solid rgba(255,255,255,.3); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; font-size: 22px; color: #fff; }
@@ -82,8 +113,8 @@ body { font-family: 'Noto Sans KR', sans-serif; color: #1a1a1a; background: #fff
 .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
 .contact-item { background: #f8f8f8; border-radius: 8px; padding: 16px; }
 .contact-item-label { font-size: 11px; color: #aaa; margin-bottom: 4px; font-weight: 500; }
-.contact-item-val { font-size: 13px; color: #1a1a1a; font-weight: 500; }
-.notice-box { background: #f8f8f8; border-radius: 8px; padding: 14px 16px; font-size: 12px; color: #888; line-height: 1.7; margin-bottom: 20px; }
+.contact-item-val { font-size: 13px; color: #1a1a1a; font-weight: 500; white-space: pre-wrap; }
+.notice-box { background: #f8f8f8; border-radius: 8px; padding: 14px 16px; font-size: 12px; color: #888; line-height: 1.7; margin-bottom: 20px; white-space: pre-wrap; }
 
 @media(max-width:640px){
   .product-grid, .psr-grid, .img-2col, .contact-grid, .btn-row { grid-template-columns: 1fr; }
