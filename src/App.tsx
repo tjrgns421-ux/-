@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Settings, X, Save } from "lucide-react";
+import { doc, getDoc, setDoc, onSnapshot } from "firebase/firestore";
+import { signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "firebase/auth";
+import { db, auth } from "./firebase";
 
 const INITIAL_DATA = {
   name: "임석훈 / Lim Seok-hun",
@@ -66,50 +69,11 @@ const INITIAL_DATA = {
   contact_btn2: "바로 구매 →",
 };
 
-const DB_NAME = 'portfolioDB';
-const STORE_NAME = 'portfolioStore';
-
-const initDB = (): Promise<IDBDatabase> => {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, 1);
-    request.onerror = () => reject(request.error);
-    request.onsuccess = () => resolve(request.result);
-    request.onupgradeneeded = (e: any) => {
-      const db = e.target.result;
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
-        db.createObjectStore(STORE_NAME);
-      }
-    };
-  });
-};
-
-const saveToDB = async (key: string, data: any) => {
-  const db = await initDB();
-  return new Promise<void>((resolve, reject) => {
-    const tx = db.transaction(STORE_NAME, 'readwrite');
-    const store = tx.objectStore(STORE_NAME);
-    const request = store.put(data, key);
-    request.onsuccess = () => resolve();
-    request.onerror = () => reject(request.error);
-  });
-};
-
-const loadFromDB = async (key: string) => {
-  const db = await initDB();
-  return new Promise<any>((resolve, reject) => {
-    const tx = db.transaction(STORE_NAME, 'readonly');
-    const store = tx.objectStore(STORE_NAME);
-    const request = store.get(key);
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  });
-};
-
 export default function App() {
   const [data, setData] = useState(INITIAL_DATA);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [password, setPassword] = useState("");
+  const [userEmail, setUserEmail] = useState<string | null>(null);
   const [editData, setEditData] = useState(INITIAL_DATA);
   const [activeType, setActiveType] = useState("정규직");
   const [activeField, setActiveField] = useState("브랜드 기획");
@@ -117,27 +81,34 @@ export default function App() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const saved = await loadFromDB('portfolio_data');
-        if (saved) {
-          setData({ ...INITIAL_DATA, ...saved });
-          setEditData({ ...INITIAL_DATA, ...saved });
-        } else {
-          // 기존 localStorage 데이터 마이그레이션
-          const localSaved = localStorage.getItem("portfolio_data");
-          if (localSaved) {
-            const parsed = JSON.parse(localSaved);
-            setData({ ...INITIAL_DATA, ...parsed });
-            setEditData({ ...INITIAL_DATA, ...parsed });
-            await saveToDB('portfolio_data', parsed);
-          }
-        }
-      } catch (e) {
-        console.error("Failed to load data:", e);
+    const unsubAuth = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setIsAuthenticated(true);
+        setUserEmail(user.email);
+      } else {
+        setIsAuthenticated(false);
+        setUserEmail(null);
       }
+    });
+
+    const docRef = doc(db, "portfolio", "data");
+    const unsubData = onSnapshot(docRef, (docSnap) => {
+      if (docSnap.exists()) {
+        const savedData = docSnap.data();
+        setData({ ...INITIAL_DATA, ...savedData });
+        setEditData({ ...INITIAL_DATA, ...savedData });
+      } else {
+        // Initialize if not exists
+        setDoc(docRef, INITIAL_DATA);
+      }
+    }, (error) => {
+      console.error("Firestore Error: ", error);
+    });
+
+    return () => {
+      unsubAuth();
+      unsubData();
     };
-    loadData();
   }, []);
 
   const handleAdminClick = (e: React.MouseEvent) => {
@@ -145,26 +116,35 @@ export default function App() {
     setIsAdminOpen(true);
   };
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.MouseEvent) => {
     e.preventDefault();
-    if (password === "1111") {
-      setIsAuthenticated(true);
-    } else {
-      alert("비밀번호가 틀렸습니다.");
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (error) {
+      console.error("Login failed", error);
+      alert("로그인에 실패했습니다.");
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error("Logout failed", error);
     }
   };
 
   const handleSave = async () => {
     setIsSaving(true);
-    setData(editData);
     try {
-      await saveToDB("portfolio_data", editData);
+      const docRef = doc(db, "portfolio", "data");
+      await setDoc(docRef, editData);
       setIsAdminOpen(false);
-      setIsAuthenticated(false);
-      setPassword("");
+      alert("저장되었습니다.");
     } catch (e) {
-      console.error("Storage error:", e);
-      alert("데이터 저장 중 오류가 발생했습니다. 파일 용량이 너무 클 수 있습니다.");
+      console.error("Failed to save data:", e);
+      alert("저장에 실패했습니다. 관리자 권한이 있는지 확인해주세요.");
     } finally {
       setIsSaving(false);
     }
@@ -697,28 +677,21 @@ export default function App() {
 
             <div className="p-6 overflow-y-auto flex-1">
               {!isAuthenticated ? (
-                <form onSubmit={handleLogin} className="flex flex-col gap-4">
-                  <div className="flex flex-col gap-2">
-                    <label className="text-sm font-bold text-gray-600">
-                      비밀번호
-                    </label>
-                    <input
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="p-3 border border-gray-300 rounded-lg"
-                      placeholder="비밀번호를 입력하세요"
-                    />
-                  </div>
+                <div className="flex flex-col gap-4 items-center justify-center py-10">
+                  <p className="text-gray-600 mb-4">관리자 권한이 필요합니다.</p>
                   <button
-                    type="submit"
-                    className="bg-black text-white p-3 rounded-lg font-bold mt-2"
+                    onClick={handleLogin}
+                    className="px-6 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors"
                   >
-                    확인
+                    Google 계정으로 로그인
                   </button>
-                </form>
+                </div>
               ) : (
                 <div className="flex flex-col gap-8">
+                  <div className="flex justify-between items-center bg-gray-100 p-4 rounded-lg">
+                    <span className="text-sm font-medium text-gray-700">로그인됨: {userEmail}</span>
+                    <button onClick={handleLogout} className="text-sm text-red-600 font-bold hover:underline">로그아웃</button>
+                  </div>
                   <div className="flex flex-col gap-4">
                     <h3 className="font-bold text-lg border-b pb-2">
                       기본 정보
