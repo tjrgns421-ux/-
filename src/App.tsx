@@ -6,6 +6,8 @@ import { db, auth } from "./firebase";
 
 const INITIAL_DATA = {
   name: "임석훈 / Lim Seok-hun",
+  category: "마케팅/기획 인재",
+  job_title_en: "Marketing · Brand Planning",
   subtitle: "데이터와 창의력 기반 인재.",
   email: "tjrgns421@gmail.com",
   phone: "010-2591-2931",
@@ -78,6 +80,7 @@ export default function App() {
   const [activeType, setActiveType] = useState("정규직");
   const [activeField, setActiveField] = useState("브랜드 기획");
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -98,8 +101,9 @@ export default function App() {
         setData({ ...INITIAL_DATA, ...savedData });
         setEditData({ ...INITIAL_DATA, ...savedData });
       } else {
-        // Initialize if not exists
-        setDoc(docRef, INITIAL_DATA);
+        // If not exists, just use INITIAL_DATA (already set in useState)
+        setData(INITIAL_DATA);
+        setEditData(INITIAL_DATA);
       }
     }, (error) => {
       console.error("Firestore Error: ", error);
@@ -150,17 +154,61 @@ export default function App() {
     }
   };
 
-  const handleFileChange = (
+  const compressImage = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target?.result as string;
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          let width = img.width;
+          let height = img.height;
+          const MAX_WIDTH = 1000;
+          const MAX_HEIGHT = 1000;
+
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx?.drawImage(img, 0, 0, width, height);
+          // Compress to WebP at 60% quality to save space
+          const dataUrl = canvas.toDataURL("image/webp", 0.6);
+          resolve(dataUrl);
+        };
+        img.onerror = (error) => reject(error);
+      };
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
+  const handleFileChange = async (
     e: React.ChangeEvent<HTMLInputElement>,
     key: string,
   ) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setEditData({ ...editData, [key]: reader.result as string });
-      };
-      reader.readAsDataURL(file);
+      setIsUploading(true);
+      try {
+        const compressedBase64 = await compressImage(file);
+        setEditData({ ...editData, [key]: compressedBase64 });
+      } catch (error: any) {
+        console.error("Error processing file:", error);
+        alert("이미지 처리 중 오류가 발생했습니다.");
+      } finally {
+        setIsUploading(false);
+      }
     }
   };
 
@@ -196,7 +244,7 @@ export default function App() {
     <div className="shop-wrap">
       <div className="breadcrumb">
         <span>
-          홈 &gt; 마케팅/기획 인재 &gt;{" "}
+          홈 &gt; {data.category} &gt;{" "}
           <span>{data.name ? data.name.split("/")[0].trim() : ""}</span>
         </span>
         <button className="admin-link" onClick={handleAdminClick}>
@@ -211,7 +259,7 @@ export default function App() {
           <span className="stock-badge">재고 1명 남음</span>
         </div>
         <div className="product-info">
-          <div className="brand-label">Marketing · Brand Planning</div>
+          <div className="brand-label">{data.job_title_en}</div>
           <div className="product-name">{data.name}</div>
           <div className="product-sub">{data.subtitle}</div>
           <div className="rating-row">
@@ -698,6 +746,28 @@ export default function App() {
                     </h3>
                     <div className="grid grid-cols-1 gap-4">
                       <label className="flex flex-col gap-1 text-sm font-bold text-gray-600">
+                        직군 카테고리 (경로 표시용)
+                        <input
+                          type="text"
+                          value={editData.category}
+                          onChange={(e) =>
+                            setEditData({ ...editData, category: e.target.value })
+                          }
+                          className="p-2 border rounded font-normal"
+                        />
+                      </label>
+                      <label className="flex flex-col gap-1 text-sm font-bold text-gray-600">
+                        영문 직무명 (Brand Label)
+                        <input
+                          type="text"
+                          value={editData.job_title_en}
+                          onChange={(e) =>
+                            setEditData({ ...editData, job_title_en: e.target.value })
+                          }
+                          className="p-2 border rounded font-normal"
+                        />
+                      </label>
+                      <label className="flex flex-col gap-1 text-sm font-bold text-gray-600">
                         이름
                         <input
                           type="text"
@@ -1032,15 +1102,6 @@ export default function App() {
                           placeholder="https://www.youtube.com/watch?v=..."
                         />
                       </label>
-                      <label className="flex flex-col gap-1 text-sm font-bold text-gray-600">
-                        또는 영상 파일 업로드
-                        <input
-                          type="file"
-                          accept="video/*"
-                          onChange={(e) => handleFileChange(e, "p2_video")}
-                          className="font-normal"
-                        />
-                      </label>
                     </div>
                   </div>
 
@@ -1249,10 +1310,10 @@ export default function App() {
                 </button>
                 <button
                   onClick={handleSave}
-                  disabled={isSaving}
+                  disabled={isSaving || isUploading}
                   className="px-6 py-2.5 rounded-lg font-medium bg-black text-white hover:bg-gray-800 flex items-center gap-2 disabled:opacity-50"
                 >
-                  <Save size={16} /> {isSaving ? "저장 중..." : "저장"}
+                  <Save size={16} /> {isSaving ? "저장 중..." : isUploading ? "파일 업로드 중..." : "저장"}
                 </button>
               </div>
             )}
