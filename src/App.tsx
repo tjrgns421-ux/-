@@ -15,6 +15,10 @@ const INITIAL_DATA = {
   price_main: "회사내규에 따름",
   price_contact: "견적 문의: tjrgns421@gmail.com\n010-2591-2931",
   delivery: "📦 배송 안내: 부르시면 달려갑니다.",
+  detail_edu: "건국대학교 글로컬캠퍼스 · 뷰티화장품과 졸업",
+  detail_skills: "AI 툴 활용, 책임감, 열정, 창의력, 데이터 기반 사고, 스토리텔링",
+  detail_projects: "올인원 제품 기획 및 제작 / AI툴 사용한 광고 영상 제작 / 뷰티 디바이스 웹사이트 기획 및 제작",
+  detail_specialties: "뷰티·화장품 브랜드 기획, AI 기반 콘텐츠 제작, UX 기획",
   philosophy: '"기획이 탄탄할수록 구현할 때 헛된 시간을 낭비하지 않는다."',
   profile_img: "https://picsum.photos/seed/profile/400/440",
   p1_title: "VIMUL — 올인원 제품 기획 및 제작",
@@ -315,31 +319,25 @@ export default function App() {
           <tbody>
             <tr>
               <td>학력</td>
-              <td>건국대학교 글로컬캠퍼스 · 뷰티화장품과 졸업</td>
+              <td>{data.detail_edu}</td>
             </tr>
             <tr>
               <td>핵심 역량</td>
               <td>
                 <div className="skill-row">
-                  <span className="skill-pill">AI 툴 활용</span>
-                  <span className="skill-pill">책임감</span>
-                  <span className="skill-pill">열정</span>
-                  <span className="skill-pill">창의력</span>
-                  <span className="skill-pill">데이터 기반 사고</span>
-                  <span className="skill-pill">스토리텔링</span>
+                  {data.detail_skills?.split(',').map((skill, i) => (
+                    <span key={i} className="skill-pill">{skill.trim()}</span>
+                  ))}
                 </div>
               </td>
             </tr>
             <tr>
               <td>프로젝트</td>
-              <td>
-                올인원 제품 기획 및 제작 / AI툴 사용한 광고 영상 제작 / 뷰티
-                디바이스 웹사이트 기획 및 제작
-              </td>
+              <td>{data.detail_projects}</td>
             </tr>
             <tr>
               <td>전문 영역</td>
-              <td>뷰티·화장품 브랜드 기획, AI 기반 콘텐츠 제작, UX 기획</td>
+              <td>{data.detail_specialties}</td>
             </tr>
             <tr>
               <td>기획 철학</td>
@@ -856,6 +854,50 @@ export default function App() {
                               ...editData,
                               delivery: e.target.value,
                             })
+                          }
+                          className="p-2 border rounded font-normal"
+                        />
+                      </label>
+                      <label className="flex flex-col gap-1 text-sm font-bold text-gray-600">
+                        상세 정보 - 학력
+                        <input
+                          type="text"
+                          value={editData.detail_edu}
+                          onChange={(e) =>
+                            setEditData({ ...editData, detail_edu: e.target.value })
+                          }
+                          className="p-2 border rounded font-normal"
+                        />
+                      </label>
+                      <label className="flex flex-col gap-1 text-sm font-bold text-gray-600">
+                        상세 정보 - 핵심 역량 (쉼표로 구분)
+                        <input
+                          type="text"
+                          value={editData.detail_skills}
+                          onChange={(e) =>
+                            setEditData({ ...editData, detail_skills: e.target.value })
+                          }
+                          className="p-2 border rounded font-normal"
+                          placeholder="예: AI 툴 활용, 책임감, 열정"
+                        />
+                      </label>
+                      <label className="flex flex-col gap-1 text-sm font-bold text-gray-600">
+                        상세 정보 - 프로젝트 목록
+                        <textarea
+                          value={editData.detail_projects}
+                          onChange={(e) =>
+                            setEditData({ ...editData, detail_projects: e.target.value })
+                          }
+                          className="p-2 border rounded font-normal h-20"
+                        />
+                      </label>
+                      <label className="flex flex-col gap-1 text-sm font-bold text-gray-600">
+                        상세 정보 - 전문 영역
+                        <input
+                          type="text"
+                          value={editData.detail_specialties}
+                          onChange={(e) =>
+                            setEditData({ ...editData, detail_specialties: e.target.value })
                           }
                           className="p-2 border rounded font-normal"
                         />
